@@ -13,6 +13,24 @@ self.MonacoEnvironment = {
   },
 };
 
+export const MONACO_EDITOR_YAML_THEME: monaco.editor.IStandaloneThemeData = {
+  base: "vs-dark",
+  inherit: true,
+  rules: [
+    { token: "type", foreground: "#03af9d" },
+    { token: "comment", foreground: "#4d4d4d" },
+    { token: "string", foreground: "#ffffff" },
+    { token: "number", foreground: "#f0ad4e" },
+    { token: "keyword", foreground: "#f0ad4e" },
+  ],
+  colors: {
+    "editor.foreground": "#ffffff",
+    "editorLineNumber.foreground": "#4d4d4d",
+    "editorLineNumber.activeForeground": "#ffffff",
+    "minimap.background": "#2a2a2a",
+  },
+};
+
 const YamlEditor = () => {
   const divEl = useRef<HTMLDivElement>(null);
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | undefined>();
@@ -24,6 +42,7 @@ const YamlEditor = () => {
   useEffect(() => {
     if (divEl.current) {
       const modelUri = monaco.Uri.parse("a://b/foo.yaml");
+
       setDiagnosticsOptions({
         enableSchemaRequest: true,
         hover: true,
@@ -37,9 +56,12 @@ const YamlEditor = () => {
           },
         ],
       });
+
+      monaco.editor.defineTheme("yamlEditorTheme", MONACO_EDITOR_YAML_THEME);
+
       editor.current = monaco.editor.create(divEl.current, {
-        language: "javascript",
-        theme: "vs-dark",
+        language: "yaml",
+        theme: "yamlEditorTheme",
         automaticLayout: true,
         model: monaco.editor.createModel(code, "yaml", modelUri),
       });
