@@ -34,7 +34,7 @@ export const MONACO_EDITOR_YAML_THEME: monaco.editor.IStandaloneThemeData = {
   },
 };
 
-const YamlEditor = () => {
+const YamlEditor: React.FC = () => {
   const divEl = useRef<HTMLDivElement>(null);
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | undefined>();
   const [code, setCode] = useState("");

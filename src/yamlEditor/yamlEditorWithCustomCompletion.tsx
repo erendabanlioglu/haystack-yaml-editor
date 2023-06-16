@@ -17,7 +17,7 @@ self.MonacoEnvironment = {
   },
 };
 
-const YamlEditor = () => {
+const YamlEditor: React.FC = () => {
   const [code, setCode] = useState<string>("");
   const editor = useRef<undefined | monaco.editor.IStandaloneCodeEditor>();
   let completionItemProvider: monaco.IDisposable;
@@ -62,23 +62,24 @@ const YamlEditor = () => {
             if (!match) {
               return { suggestions: [] };
             }
-            const matchType = model.findPreviousMatch(
-              "type",
-              position,
-              false,
-              false,
-              null,
-              true
-            );
-            let nodeType = "";
-            if (matchType) {
-              const { startLineNumber } = matchType.range;
-              const lineContent = model.getLineContent(startLineNumber);
-              nodeType = lineContent
-                .split(":")[1]
-                .split("#")[0]
-                .replace(/\s/g, "");
-            }
+            // const matchType = model.findPreviousMatch(
+            //   "type",
+            //   position,
+            //   false,
+            //   false,
+            //   null,
+            //   true
+            // );
+            // let nodeType = "";
+            // if (matchType) {
+            //   const { startLineNumber } = matchType.range;
+            //   const lineContent = model.getLineContent(startLineNumber);
+            //   nodeType = lineContent
+            //     .split(":")[1]
+            //     .split("#")[0]
+            //     .replace(/\s/g, "");
+            //   console.log(nodeType);
+            // }
             const word = model.getWordUntilPosition(position);
 
             const range = {
