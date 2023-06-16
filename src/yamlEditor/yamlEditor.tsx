@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as monaco from "monaco-editor";
 import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+import * as Y from "yjs";
+import { WebrtcProvider } from "y-webrtc";
+import { MonacoBinding } from "y-monaco";
 import yamlWorker from "./yaml.worker.js?worker";
 import { setDiagnosticsOptions } from "monaco-yaml";
 
@@ -36,6 +39,10 @@ const YamlEditor = () => {
   const editor = useRef<monaco.editor.IStandaloneCodeEditor | undefined>();
   const [code, setCode] = useState("");
 
+  const ydoc = new Y.Doc();
+  const provider = new WebrtcProvider("monaco", ydoc);
+  const type = ydoc.getText("monaco");
+
   const schemaURL =
     "https://raw.githubusercontent.com/deepset-ai/haystack-json-schema/main/json-schema/haystack-pipeline-main.schema.json";
 
@@ -60,6 +67,7 @@ const YamlEditor = () => {
       monaco.editor.defineTheme("yamlEditorTheme", MONACO_EDITOR_YAML_THEME);
 
       editor.current = monaco.editor.create(divEl.current, {
+        value: "",
         language: "yaml",
         theme: "yamlEditorTheme",
         automaticLayout: true,
@@ -72,11 +80,21 @@ const YamlEditor = () => {
           if (editor.current) setCode(editor.current.getValue());
         }
       );
+
+      new MonacoBinding(
+        type,
+        editor.current.getModel()!,
+        new Set([editor.current]),
+        provider.awareness
+      );
+
+      provider.connect();
     }
 
     return () => {
       monaco.editor.getModels().forEach((model) => model.dispose());
       if (editor.current) editor.current.dispose();
+      provider.disconnect();
     };
   }, []);
 
